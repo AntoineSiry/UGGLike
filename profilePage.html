@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="profilepage.css">
+    <script src ="./profilePage.js"></script>
+    <title>U.ggLike - profilePage</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setProfileInfo();
+        });
+    </script>
+</head>
+<body>
+    <h1>Profile Page</h1>
+    <div class="profile-container">
+        <p id="playerLevel"></p>
+        <img id="profileIcon" src="" alt="Profile icon"/>
+    </div>
+    <div class="ranked-queue">Ranked Solo
+        <p id="tierSolo"></p>
+        <p id="wins-losses-Solo"></p>
+    </div>
+    <div class="flex-queue">Ranked Flex
+        <p id="tierFlex"></p>
+        <p id="wins-losses-Flex"></p>
+    </div>
+</body>
+</html>

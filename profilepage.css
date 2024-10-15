@@ -1,0 +1,37 @@
+html{
+    background-color: #070720;
+}
+
+h1{
+    color: white;
+    text-align: center;
+}
+
+#profileIcon{
+    border: 5px solid;
+    border-radius: 10px;
+    height: auto; /* Maintient le rapport d'aspect de l'image */
+}
+
+div{
+    color: white;
+}
+
+.profile-container {
+    position: relative; /* Position relative pour positionner le texte au-dessus de l'image */
+    display: flex; /* Utilisation de Flexbox */
+    justify-content: center; /* Centre le contenu horizontalement */
+    align-items: center; /* Centre le contenu verticalement */
+}
+
+#playerLevel {
+    position: absolute; /* Positionne le texte au-dessus de l'image */
+    top: -7%; /* Ajuste ce pourcentage pour contrôler la hauteur du texte */
+    left: 50%; /* Centre horizontalement */
+    transform: translate(-50%, -50%); /* Centre parfaitement le texte */
+    text-align: center; /* Centre le texte */
+    width: 2%; /* Prend toute la largeur du conteneur */
+    background-color: rgba(0, 0, 1); /* Couleur de fond légèrement transparente */
+    border-radius: 5px; /* Bords arrondis pour le texte */
+    padding: 1%; /* Ajoute un peu de padding */
+}
