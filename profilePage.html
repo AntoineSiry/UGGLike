@@ -15,16 +15,21 @@
 <body>
     <h1>Profile Page</h1>
     <div class="profile-container">
-        <p id="playerLevel"></p>
+        <p id="riotId"></p>
         <img id="profileIcon" src="" alt="Profile icon"/>
+        <p id="playerLevel"></p>
     </div>
-    <div class="ranked-queue">Ranked Solo
-        <p id="tierSolo"></p>
-        <p id="wins-losses-Solo"></p>
-    </div>
-    <div class="flex-queue">Ranked Flex
-        <p id="tierFlex"></p>
-        <p id="wins-losses-Flex"></p>
+    <div class="queues">
+        <div class="solo-queue">Ranked Solo
+            <img id="soloRankIcon" src="" alt="Ranked icon"/>
+            <p id="tierSolo"></p>
+            <p id="wins-losses-Solo"></p>
+        </div>
+        <div class="flex-queue">Ranked Flex
+            <img id="flexRankIcon" src="" alt="Ranked icon"/>
+            <p id="tierFlex"></p>
+            <p id="wins-losses-Flex"></p>
+        </div>
     </div>
 </body>
 </html>

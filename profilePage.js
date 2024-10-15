@@ -2,20 +2,25 @@ async function setProfileInfo(){
     const urlParams = new URLSearchParams(window.location.search);
     
     const profileInfoStr = urlParams.get('profileInfo');
-
     const profileInfo = JSON.parse(decodeURIComponent(profileInfoStr));
     
     let imageUrl = `https://ddragon.leagueoflegends.com/cdn/14.20.1/img/profileicon/${profileInfo.profileIconId}.png`
     document.getElementById("profileIcon").src = imageUrl;
     
     const link = `http://localhost:3000/getPlayerRankedInfo/${profileInfo.id}`;
+    const linkSummoner = `http://localhost:3000/getPlayerAccount/${profileInfo.puuid}`;
 
     const reponse = await fetch(link);
+    const reponseSum = await fetch(linkSummoner);
 
     let data = await reponse.json();
+    let dataSum = await reponseSum.json();
 
     const playerLevel = document.getElementById("playerLevel");
     playerLevel.innerHTML = profileInfo.summonerLevel;
+
+    const playerRiotId = document.getElementById("riotId");
+    playerRiotId.innerHTML = dataSum.gameName + "#" + dataSum.tagLine;
 
     setSoloRankedInfo(data[1]);
     setFlexRankedInfo(data[0]);
@@ -50,7 +55,7 @@ function setColorToPPBorder(soloRank, flexRank){
         if(soloRank === entry){
             idSoloRank = index;
         }
-        if(flexRank == entry){
+        if(flexRank === entry){
             idFlexRank = index;
         }
     });
@@ -62,4 +67,26 @@ function setColorToPPBorder(soloRank, flexRank){
     profileIcon.style.borderColor = colors[bestRank];
     playerLevel.style.borderColor = colors[bestRank];
 
+    setRankedIcons(idSoloRank, idFlexRank);
+
+}
+
+function setRankedIcons(indexSoloq, indexFlexq){
+    const ranksImg = ["../Ranked Emblems Latest/Rank=Iron.png", 
+        "../Ranked Emblems Latest/Rank=Bronze.png",
+        "../Ranked Emblems Latest/Rank=Silver.png",
+        "../Ranked Emblems Latest/Rank=Gold.png",
+        "../Ranked Emblems Latest/Rank=Platinum.png",
+        "../Ranked Emblems Latest/Rank=Emerald.png",
+        "../Ranked Emblems Latest/Rank=Diamond.png",
+        "../Ranked Emblems Latest/Rank=Master.png",
+        "../Ranked Emblems Latest/Rank=Grandmaster.png",
+        "../Ranked Emblems Latest/Rank=Challenger.png",
+    ];
+
+    const soloqRankIcon = document.getElementById("soloRankIcon");
+    const flexRankIcon = document.getElementById("flexRankIcon");
+    soloqRankIcon.src = ranksImg[indexSoloq];
+    flexRankIcon.src = ranksImg[indexFlexq];
+    
 }

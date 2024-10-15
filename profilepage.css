@@ -8,9 +8,11 @@ h1{
 }
 
 #profileIcon{
-    border: 5px solid;
+    border: 3px solid;
     border-radius: 10px;
     height: auto; /* Maintient le rapport d'aspect de l'image */
+    width: 100px;
+    padding: 2px;
 }
 
 div{
@@ -20,18 +22,70 @@ div{
 .profile-container {
     position: relative; /* Position relative pour positionner le texte au-dessus de l'image */
     display: flex; /* Utilisation de Flexbox */
-    justify-content: center; /* Centre le contenu horizontalement */
-    align-items: center; /* Centre le contenu verticalement */
+    justify-content: left; /* Centre le contenu horizontalement */
+    align-items: left; /* Centre le contenu verticalement */
+    margin-left: 200px;
 }
 
 #playerLevel {
     position: absolute; /* Positionne le texte au-dessus de l'image */
-    top: -7%; /* Ajuste ce pourcentage pour contrôler la hauteur du texte */
-    left: 50%; /* Centre horizontalement */
+    top: -20%; /* Ajuste ce pourcentage pour contrôler la hauteur du texte */
+    left: 5.5%; /* Centre horizontalement */
     transform: translate(-50%, -50%); /* Centre parfaitement le texte */
     text-align: center; /* Centre le texte */
-    width: 2%; /* Prend toute la largeur du conteneur */
-    background-color: rgba(0, 0, 1); /* Couleur de fond légèrement transparente */
-    border-radius: 5px; /* Bords arrondis pour le texte */
-    padding: 1%; /* Ajoute un peu de padding */
+    border: 3px solid;
+    border-radius: 10px;
+    background-color: black;
+    padding: 5px;
+}
+
+#riotId{
+    position: absolute;
+    text-align: center;
+    top: 20%;
+    left: 10%;
+}
+
+.queues{
+    margin-left: 200px;
+    margin-top: 50px;
+}
+
+.solo-queue{
+    background-color: #191937;
+    padding: 15px;
+    border-radius: 3px;
+    width: 350px;
+    display: flex;               /* Utilise Flexbox pour aligner les éléments */
+    align-items: center;
+    margin-bottom: 10px; 
+}
+
+#flexRankIcon{
+    height: auto; /* Maintient le rapport d'aspect de l'image */
+    width: 70px;
+    margin-right: 20px;
+}
+
+#soloRankIcon{
+    height: auto; /* Maintient le rapport d'aspect de l'image */
+    width: 70px;
+    margin-right: 20px;
+}
+
+#tierSolo, #wins-losses-Solo {
+    padding: 5px;                   /* Enlève les marges par défaut des paragraphes */
+}
+
+#tierFlex, #wins-losses-Flex {
+    padding: 5px;                   /* Enlève les marges par défaut des paragraphes */
+}
+
+.flex-queue{
+    background-color: #191937;
+    padding: 15px;
+    border-radius: 3px;
+    width: 350px;
+    display: flex;               /* Utilise Flexbox pour aligner les éléments */
+    align-items: center; 
 }

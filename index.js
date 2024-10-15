@@ -1,12 +1,10 @@
 function detectKey(event){
     if(event.key === "Enter"){
         let inputValue = event.target.value;
-
         if(inputValue.trim() !== ""){
-            getPUUIDfromName(inputValue);
+            getPUUIDfromName(inputValue); 
         }
     }    
-
 }
 
 function getNameAndID(input){
