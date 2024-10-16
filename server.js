@@ -63,6 +63,32 @@ app.get('/getPlayerAccount/:puuid', async (req, res) => {
   }
 });
 
+app.get('/getMatchBypuuid/:puuid', async (req, res) => {
+  const { puuid } = req.params;
+  const link = `https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=20&${apiKey}`;
+
+  try {
+    const response = await fetch(link);
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur lors de la requête à l\'API de Riot Games.' });
+  }
+});
+
+app.get('/getMatchByMatchId/:matchId', async (req, res) => {
+  const { matchId } = req.params;
+  const link = `https://europe.api.riotgames.com/lol/match/v5/matches/${matchId}?${apiKey}`;
+
+  try {
+    const response = await fetch(link);
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur lors de la requête à l\'API de Riot Games.' });
+  }
+});
+
 app.listen(3000, () => {
   console.log('Le serveur tourne sur http://localhost:3000');
 });
