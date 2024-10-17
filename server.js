@@ -3,6 +3,7 @@ import fetch from 'node-fetch';
 
 const app = express();
 const apiKey = 'api_key=RGAPI-4d872bb3-e592-410e-a2d2-bf919619cc2c';
+const personnalApiKye ='api_key=RGAPI-21d57afc-2865-4c6b-b24d-c3f7f52ea237'
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*'); // Permettre toutes les origines (utilise '*' pour autoriser toutes les requêtes)
@@ -65,7 +66,7 @@ app.get('/getPlayerAccount/:puuid', async (req, res) => {
 
 app.get('/getMatchBypuuid/:puuid', async (req, res) => {
   const { puuid } = req.params;
-  const link = `https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=20&${apiKey}`;
+  const link = `https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=10&${apiKey}`;
 
   try {
     const response = await fetch(link);

@@ -24,60 +24,110 @@ async function setProfileInfo(){
 
     //console.log(data);
 
-    setSoloRankedInfo(data[0]);
-    setFlexRankedInfo(data[1]);
-    setColorToPPBorder(data[1].tier, data[0].tier);
-
+    if(data.length > 1){
+      setSoloRankedInfo(data[0]);
+      setFlexRankedInfo(data[1]);
+      setColorToPPBorder(data[0].tier, data[1].tier);
+    }else if(data[0].queueType === 'RANKED_SOLO_5x5' && data.length <= 1){
+      setSoloRankedInfo(data[0]);
+      setFlexRankedInfo(null);
+      setColorToPPBorder(data[0].tier);
+    }else if(data[0].queueType === 'RANKED_FLEX_SR' && data.length <= 1){
+      setSoloRankedInfo(null);
+      setFlexRankedInfo(data[0]);
+      setColorToPPBorder(data[0].tier);
+    }
+    
     getMatchsId(profileInfo.puuid);
     
 }
 
 function setSoloRankedInfo(soloRankedData){
-    let soloTierDisplay = document.getElementById("tierSolo");
+
+  let soloTierDisplay = document.getElementById("tierSolo");
+
+  if(soloRankedData != null){
     let soloWinsLossesDisplay = document.getElementById("wins-losses-Solo");
     let soloqLp = document.getElementById("soloqLp");
-
     soloTierDisplay.innerHTML = soloRankedData.tier + " " + soloRankedData.rank;
     soloWinsLossesDisplay.innerHTML = soloRankedData.wins + "W " + soloRankedData.losses + "L";
     soloqLp.innerHTML = soloRankedData.leaguePoints + "LP";
+    return;
+  }
+    soloTierDisplay.innerHTML = "Unranked";
 }
 
 function setFlexRankedInfo(flexRankedData){
-    let flexTierDisplay = document.getElementById("tierFlex");
+
+  let flexTierDisplay = document.getElementById("tierFlex");
+
+  if(flexRankedData != null){
     let flexWinsLossesDisplay = document.getElementById("wins-losses-Flex");
     let flexLp = document.getElementById("FlexLp");
-
     flexTierDisplay.innerHTML = flexRankedData.tier + " " + flexRankedData.rank;
     flexWinsLossesDisplay.innerHTML = flexRankedData.wins + "W " + flexRankedData.losses + "L";
     flexLp.innerHTML = flexRankedData.leaguePoints + "LP";
+    return;
+  }
+
+  flexTierDisplay.innerHTML = "Unranked";
+
 }
 
-function setColorToPPBorder(soloRank, flexRank){
+function setColorToPPBorder(flexRank, soloRank){
     const ranks = ['IRON', 'BRONZE', 'SILVER', 'GOLD', 'PLATINUM', 'EMERALD', 'DIAMOND', 'MASTER', 'GRANDMASTER', 'CHALLENGER'];
     const colors = ["#3d2e2b", "#81554e", "#9daebb", "#e3ac6b", "#3faad0", "#0ea13e", "#3025d3", "#963bd7", "#a02b23", "#aef3fd"];
 
     let idFlexRank;
     let idSoloRank;
 
-    ranks.forEach(function(entry, index){
+    if(soloRank != null && flexRank != null){
+      for(const [index, entry] of ranks.entries()) {
+        const entry=ranks[index];
+        if(soloRank === entry){
+          idSoloRank = index;
+      }
+        if(flexRank === entry){
+          idFlexRank = index;
+        }
+      }
+  
+      let bestRank = Math.max(idFlexRank, idSoloRank);
+  
+      const profileIcon = document.getElementById("profileIcon");
+      const playerLevel = document.getElementById("playerLevel");
+      profileIcon.style.borderColor = colors[bestRank];
+      playerLevel.style.borderColor = colors[bestRank];
+      setRankedIcons(idSoloRank, idFlexRank); 
+
+    }else if(soloRank != null && flexRank == null){
+      ranks.forEach(function(entry, index){
         if(soloRank === entry){
             idSoloRank = index;
+            // Penser a mettre un break ici
         }
+        const profileIcon = document.getElementById("profileIcon");
+        const playerLevel = document.getElementById("playerLevel");
+        profileIcon.style.borderColor = colors[idSoloRank];
+        playerLevel.style.borderColor = colors[idSoloRank];
+        setRankedIcons(idSoloRank, 10);
+      });
+      return;
+    }else{
+      ranks.forEach(function(entry, index){
         if(flexRank === entry){
             idFlexRank = index;
+            // Penser a mettre un break ici
         }
+      const profileIcon = document.getElementById("profileIcon");
+      const playerLevel = document.getElementById("playerLevel");
+      profileIcon.style.borderColor = colors[idFlexRank];
+      playerLevel.style.borderColor = colors[idFlexRank];
+      setRankedIcons(10, idFlexRank);
     });
-
-    let bestRank = Math.max(idFlexRank, idSoloRank);
-
-    const profileIcon = document.getElementById("profileIcon");
-    const playerLevel = document.getElementById("playerLevel");
-    profileIcon.style.borderColor = colors[bestRank];
-    playerLevel.style.borderColor = colors[bestRank];
-
-    setRankedIcons(idSoloRank, idFlexRank);
-
+  } 
 }
+
 
 function setRankedIcons(indexFlexq, indexSoloq){
     const ranksImg = ["../Ranked Emblems Latest/Rank=Iron.png", 
@@ -90,6 +140,7 @@ function setRankedIcons(indexFlexq, indexSoloq){
         "../Ranked Emblems Latest/Rank=Master.png",
         "../Ranked Emblems Latest/Rank=Grandmaster.png",
         "../Ranked Emblems Latest/Rank=Challenger.png",
+        "../Ranked Emblems Latest/Rank=Unranked.png",
     ];
 
     const soloqRankIcon = document.getElementById("soloRankIcon");
@@ -105,30 +156,95 @@ async function getMatchsId(puuid){
 
     const reponse = await fetch(link);
 
-    let data = await reponse.json();
+    let matchs = await reponse.json();
 
-    //console.log(data);
-    data.forEach(function(matchId){
-        getMatchByMatchId(matchId);
-    });
-    
+    for(let i = 0; i < matchs.length; i++){
+        const match = matchs[i];
+        await getMatchByMatchId(match, puuid);
+    }
+
+    // matchs.forEach(function(matchId){
+    //     getMatchByMatchId(matchId, puuid);
+    // });
 }
 
-async function getMatchByMatchId(matchId) {
+async function getMatchByMatchId(matchId, puuid) {
     const link = `http://localhost:3000/getMatchByMatchId/${matchId}`;
 
     const reponse = await fetch(link);
 
-    let data = await reponse.json();
+    let match = await reponse.json();
 
-    console.log(data);
+    //console.log(match);
 
-    //createMatchRecap(data);
+    let searchedPlayerId = findRightPlayerInfos(puuid, match);
+
+    displayMatch(match, match.info.participants[searchedPlayerId])
 }
 
-function createMatchRecap(match){
+function createMatchRecap(match, player){
+
+  const champPlayed = player.championName;
+
+  const link = `http://ddragon.leagueoflegends.com/cdn/13.20.1/img/champion/${champPlayed}.png`;
+
     return `
     <div class="match">
+        <div class="match-header">
+            <div class="match-duration">${Math.floor(match.info.gameDuration / 60)}:${Math.floor(match.info.gameDuration % 60).toString().padStart(2, '0')}</div>
+        </div>
+        <div class="match-body">
+            <div class="player-stats">
+                <div class="champion-icon">
+                    <img src="${link}" alt="Champion">
+                </div>
+                <div class="player-kda">
+                    <span>${player.kills} / ${player.deaths} / ${player.assists}</span>
+                    <div class="kda-ratio">${player.challenges.kda} KDA</div>
+                </div>
+                <div class="cs-vision">
+                    <span>${player.totalMinionsKilled + player.neutralMinionsKilled} CS</span>
+                    <span>${player.visionScore} vision</span>
+                </div>
+            </div>
+            <div class="items">
+            </div>
+            <div class="teams">
+                <div class="team team-blue">
+                </div>
+                <div class="team team-red">
+                </div>
+            </div>
+        </div>
+    </div>
+`;
+}
+
+function findRightPlayerInfos(Searchedpuuid, match){
+    //console.log(match);
+    if (match && match.info && Array.isArray(match.info.participants)) {
+        return match.info.participants.findIndex(function(player) {
+            return player.puuid === Searchedpuuid;
+        });
+    }
+}
+
+function displayMatch(match, player){
+
+    const divRecapMatch = document.getElementById("matchHistory");
+
+    const matchRecap = createMatchRecap(match, player);
+
+    divRecapMatch.insertAdjacentHTML('beforeend', matchRecap);
+
+}
+
+function getAllPlayersInMatch(match){
+  // cette fonction get tout les joueurs dans un match (pseudos + champions joué dans la partie)
+  // Elle retourne un objet
+}
+
+/* <div class="match">
         <div class="match-header">
             <div class="rank">${match.rank}</div>
             <div class="lp">${match.lp > 0 ? '+' + match.lp : match.lp} LP</div>
@@ -138,7 +254,7 @@ function createMatchRecap(match){
         <div class="match-body">
             <div class="player-stats">
                 <div class="champion-icon">
-                    <img src="champion-image.jpg" alt="Champion">
+                    <img src="" alt="Champion">
                 </div>
                 <div class="player-kda">
                     <span>${match.kda.kills} / ${match.kda.deaths} / ${match.kda.assists}</span>
@@ -162,5 +278,4 @@ function createMatchRecap(match){
             </div>
         </div>
     </div>
-`;
-}
+`; */
