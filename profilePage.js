@@ -254,6 +254,10 @@ function createMatchRecap(match, player){
 
   const players = getAllPlayersInMatch(match);
 
+  const itemsImg = getItemPurchased(player);
+
+  console.log(match);
+
   const blueTeamHTML = Object.keys(players)
     .filter(key => players[key].teamId == 100) 
     .map(key => `<div class = "player"> <img src="${players[key].champImg}" alt="Player Champion" id="playerChampion"> 
@@ -284,6 +288,7 @@ function createMatchRecap(match, player){
                 </div>
             </div>
             <div class="items">
+            ${Object.values(itemsImg).map(item => `<img src="${item.link}" alt="Item" id="itemsImg">`).join('')}
             </div>
             <div class="teams">
                 <div class="team-team-blue">
@@ -314,13 +319,11 @@ function displayMatch(match, player){
     const matchRecap = createMatchRecap(match, player);
 
     divRecapMatch.insertAdjacentHTML('beforeend', matchRecap);
-
 }
 
 function getAllPlayersInMatch(match){
 
   let players = {}
-
   match.info.participants.forEach(function(player, index){
     let champPlayed = player.championName;
     players[`player${index + 1}`] = {
@@ -333,6 +336,34 @@ function getAllPlayersInMatch(match){
   return players;
   // cette fonction get tout les joueurs dans un match (pseudos + champions joué dans la partie)
   // Elle retourne un objet
+}
+
+function getItemPurchased(player){
+  let itemsImg = {
+    Item0: {
+      link: `https://ddragon.leagueoflegends.com/cdn/14.20.1/img/item/${player.item0}.png`
+    },
+    Item1: {
+      link: `https://ddragon.leagueoflegends.com/cdn/14.20.1/img/item/${player.item1}.png`
+    },
+    Item2: {
+      link: `https://ddragon.leagueoflegends.com/cdn/14.20.1/img/item/${player.item2}.png`
+    },
+    Item3: {
+      link: `https://ddragon.leagueoflegends.com/cdn/14.20.1/img/item/${player.item3}.png`
+    },
+    Item4: {
+      link: `https://ddragon.leagueoflegends.com/cdn/14.20.1/img/item/${player.item4}.png`
+    },
+    Item5: {
+      link: `https://ddragon.leagueoflegends.com/cdn/14.20.1/img/item/${player.item5}.png`
+    },
+    Item6: {
+      link: `https://ddragon.leagueoflegends.com/cdn/14.20.1/img/item/${player.item6}.png`
+    }
+  };
+  console.log(itemsImg);
+  return itemsImg;
 }
 
 /* <div class="match">
