@@ -1,3 +1,61 @@
+const ranks = {
+  IRON: {
+    image : "../Ranked Emblems Latest/Rank=Iron.png",
+    color :"#3d2e2b",
+    id: 0
+  },
+  BRONZE: {
+    image : "../Ranked Emblems Latest/Rank=Bronze.png",
+    color :"#81554e",
+    id: 1
+  },
+  SILVER: {
+    image : "../Ranked Emblems Latest/Rank=Silver.png",
+    color :"#9daebb",
+    id: 2
+  },
+  GOLD: {
+    image : "../Ranked Emblems Latest/Rank=Gold.png",
+    color :"#e3ac6b",
+    id: 3
+  },
+  PLATINUM: {
+    image : "../Ranked Emblems Latest/Rank=Platinum.png",
+    color :"#3faad0",
+    id: 4
+  },
+  EMERALD: {
+    image : "../Ranked Emblems Latest/Rank=Emerald.png",
+    color :"#0ea13e",
+    id: 5
+  },
+  DIAMOND: {
+    image : "../Ranked Emblems Latest/Rank=Diamond.png",
+    color :"#3025d3",
+    id: 6
+  },
+  MASTER: {
+    image : "../Ranked Emblems Latest/Rank=Master.png",
+    color :"#963bd7",
+    id: 7
+  },
+  GRANDMASTER: {
+    image : "../Ranked Emblems Latest/Rank=Grandmaster.png",
+    color :"#a02b23",
+    id: 8
+  },
+  CHALLENGER: {
+    image : "../Ranked Emblems Latest/Rank=Challenger.png",
+    color :"#aef3fd",
+    id: 9
+  },
+  UNRANKED: {
+    image : "../Ranked Emblems Latest/Rank=Unranked.png",
+    color : "#414165",
+    id: 10
+  }   
+};
+
 async function setProfileInfo(){
     const urlParams = new URLSearchParams(window.location.search);
     
@@ -22,22 +80,26 @@ async function setProfileInfo(){
     const playerRiotId = document.getElementById("riotId");
     playerRiotId.innerHTML = dataSum.gameName + "#" + dataSum.tagLine;
 
-    //console.log(data);
-
-    if(data.length > 1){
-      setSoloRankedInfo(data[0]);
-      setFlexRankedInfo(data[1]);
-      setColorToPPBorder(data[0].tier, data[1].tier);
-    }else if(data[0].queueType === 'RANKED_SOLO_5x5' && data.length <= 1){
-      setSoloRankedInfo(data[0]);
-      setFlexRankedInfo(null);
-      setColorToPPBorder(data[0].tier);
-    }else if(data[0].queueType === 'RANKED_FLEX_SR' && data.length <= 1){
+    console.log(profileInfo.puuid);
+    if(data.length > 0){
+      if(data.length > 1){
+        setSoloRankedInfo(data[0]);
+        setFlexRankedInfo(data[1]);
+        setColorToPPBorder(data[0].tier, data[1].tier);
+      }else if(data[0].queueType === 'RANKED_SOLO_5x5' && data.length <= 1){
+        setSoloRankedInfo(data[0]);
+        setFlexRankedInfo(null);
+        setColorToPPBorder(data[0].tier);
+      }else if(data[0].queueType === 'RANKED_FLEX_SR' && data.length <= 1){
+        setSoloRankedInfo(null);
+        setFlexRankedInfo(data[0]);
+        setColorToPPBorder(data[0].tier);
+      }
+    }else if(data.length == 0){
       setSoloRankedInfo(null);
-      setFlexRankedInfo(data[0]);
-      setColorToPPBorder(data[0].tier);
+      setFlexRankedInfo(null);
+      setColorToPPBorder(null, null)
     }
-    
     getMatchsId(profileInfo.puuid);
     
 }
@@ -69,86 +131,84 @@ function setFlexRankedInfo(flexRankedData){
     flexLp.innerHTML = flexRankedData.leaguePoints + "LP";
     return;
   }
-
   flexTierDisplay.innerHTML = "Unranked";
 
 }
 
-function setColorToPPBorder(flexRank, soloRank){
-    const ranks = ['IRON', 'BRONZE', 'SILVER', 'GOLD', 'PLATINUM', 'EMERALD', 'DIAMOND', 'MASTER', 'GRANDMASTER', 'CHALLENGER'];
-    const colors = ["#3d2e2b", "#81554e", "#9daebb", "#e3ac6b", "#3faad0", "#0ea13e", "#3025d3", "#963bd7", "#a02b23", "#aef3fd"];
+function setColorToPPBorder(soloRank, flexRank){
 
-    let idFlexRank;
-    let idSoloRank;
+  let soloqRank;
+  let flexqRank;
 
     if(soloRank != null && flexRank != null){
-      for(const [index, entry] of ranks.entries()) {
-        const entry=ranks[index];
-        if(soloRank === entry){
-          idSoloRank = index;
-      }
-        if(flexRank === entry){
-          idFlexRank = index;
+
+      Object.keys(ranks).forEach(rank => {
+        if(soloRank == rank){
+          soloqRank = ranks[rank];
         }
-      }
+        if(flexRank == rank){
+          flexqRank = ranks[rank];
+        }
+      });
   
-      let bestRank = Math.max(idFlexRank, idSoloRank);
+      let bestRank = soloqRank.id > flexqRank.id ? soloqRank : flexqRank;
   
       const profileIcon = document.getElementById("profileIcon");
       const playerLevel = document.getElementById("playerLevel");
-      profileIcon.style.borderColor = colors[bestRank];
-      playerLevel.style.borderColor = colors[bestRank];
-      setRankedIcons(idSoloRank, idFlexRank); 
+      const soloqRankIcon = document.getElementById("soloRankIcon");
+      const flexRankIcon = document.getElementById("flexRankIcon");
+      profileIcon.style.borderColor = bestRank.color;
+      playerLevel.style.borderColor = bestRank.color;
+      soloqRankIcon.src = soloqRank.image;
+      flexRankIcon.src = flexqRank.image;
+      return;
 
     }else if(soloRank != null && flexRank == null){
-      ranks.forEach(function(entry, index){
-        if(soloRank === entry){
-            idSoloRank = index;
-            // Penser a mettre un break ici
+      flexqRank = ranks.UNRANKED;
+      Object.keys(ranks).forEach(rank => {
+        if(soloRank == rank){
+          soloqRank = ranks[rank];
         }
+      });
         const profileIcon = document.getElementById("profileIcon");
         const playerLevel = document.getElementById("playerLevel");
-        profileIcon.style.borderColor = colors[idSoloRank];
-        playerLevel.style.borderColor = colors[idSoloRank];
-        setRankedIcons(idSoloRank, 10);
-      });
-      return;
-    }else{
-      ranks.forEach(function(entry, index){
-        if(flexRank === entry){
-            idFlexRank = index;
-            // Penser a mettre un break ici
+        const soloqRankIcon = document.getElementById("soloRankIcon");
+        const flexRankIcon = document.getElementById("flexRankIcon");
+        profileIcon.style.borderColor = soloqRank.color;
+        playerLevel.style.borderColor = soloqRank.color;
+        soloqRankIcon.src = soloqRank.image;
+        flexRankIcon.src = flexqRank.image;
+        return;
+    }else if(soloRank == null && flexRank != null)
+    {
+      soloqRank = ranks.UNRANKED;
+      Object.keys(ranks).forEach(rank => {
+        if(flexqRank == rank){
+          flexqRank = ranks[rank];
         }
+      });
       const profileIcon = document.getElementById("profileIcon");
       const playerLevel = document.getElementById("playerLevel");
-      profileIcon.style.borderColor = colors[idFlexRank];
-      playerLevel.style.borderColor = colors[idFlexRank];
-      setRankedIcons(10, idFlexRank);
-    });
-  } 
-}
+      const soloqRankIcon = document.getElementById("soloRankIcon");
+      const flexRankIcon = document.getElementById("flexRankIcon");
+      profileIcon.style.borderColor = flexqRank.color;
+      playerLevel.style.borderColor = flexqRank.color;
+      soloqRankIcon.src = soloqRank.image;
+      flexRankIcon.src = flexqRank.image;
+  }else{
+    soloqRank = ranks.UNRANKED;
+    flexqRank = ranks.UNRANKED;
 
-
-function setRankedIcons(indexFlexq, indexSoloq){
-    const ranksImg = ["../Ranked Emblems Latest/Rank=Iron.png", 
-        "../Ranked Emblems Latest/Rank=Bronze.png",
-        "../Ranked Emblems Latest/Rank=Silver.png",
-        "../Ranked Emblems Latest/Rank=Gold.png",
-        "../Ranked Emblems Latest/Rank=Platinum.png",
-        "../Ranked Emblems Latest/Rank=Emerald.png",
-        "../Ranked Emblems Latest/Rank=Diamond.png",
-        "../Ranked Emblems Latest/Rank=Master.png",
-        "../Ranked Emblems Latest/Rank=Grandmaster.png",
-        "../Ranked Emblems Latest/Rank=Challenger.png",
-        "../Ranked Emblems Latest/Rank=Unranked.png",
-    ];
-
+    const profileIcon = document.getElementById("profileIcon");
+    const playerLevel = document.getElementById("playerLevel");
     const soloqRankIcon = document.getElementById("soloRankIcon");
     const flexRankIcon = document.getElementById("flexRankIcon");
-    soloqRankIcon.src = ranksImg[indexSoloq];
-    flexRankIcon.src = ranksImg[indexFlexq];
-    
-}
+    profileIcon.style.borderColor = flexqRank.color;
+    playerLevel.style.borderColor = flexqRank.color;
+    soloqRankIcon.src = soloqRank.image;
+    flexRankIcon.src = flexqRank.image;
+  }
+} 
 
 async function getMatchsId(puuid){
 
@@ -162,6 +222,8 @@ async function getMatchsId(puuid){
         const match = matchs[i];
         await getMatchByMatchId(match, puuid);
     }
+
+    console.log(matchs);
 
     // matchs.forEach(function(matchId){
     //     getMatchByMatchId(matchId, puuid);
@@ -188,8 +250,22 @@ function createMatchRecap(match, player){
 
   const link = `http://ddragon.leagueoflegends.com/cdn/13.20.1/img/champion/${champPlayed}.png`;
 
+  let color = player.win ? "#1e2b5e" : "#3e213b";
+
+  const players = getAllPlayersInMatch(match);
+
+  const blueTeamHTML = Object.keys(players)
+    .filter(key => players[key].teamId == 100) 
+    .map(key => `<div class = "player"> <img src="${players[key].champImg}" alt="Player Champion" id="playerChampion"> 
+      <span class="player-name">${players[key].playerName}</span></div>`).join('');
+
+    const redTeamHTML = Object.keys(players)
+    .filter(key => players[key].teamId === 200) 
+    .map(key => `<div class = "player"> <img src="${players[key].champImg}" alt="Player Champion" id="playerChampion"> 
+      <span class="player-name">${players[key].playerName}</span></div>`).join('');
+
     return `
-    <div class="match">
+    <div class="match" style="background-color: ${color};">
         <div class="match-header">
             <div class="match-duration">${Math.floor(match.info.gameDuration / 60)}:${Math.floor(match.info.gameDuration % 60).toString().padStart(2, '0')}</div>
         </div>
@@ -210,9 +286,11 @@ function createMatchRecap(match, player){
             <div class="items">
             </div>
             <div class="teams">
-                <div class="team team-blue">
+                <div class="team-team-blue">
+                ${blueTeamHTML}
                 </div>
-                <div class="team team-red">
+                <div class="team-team-red">
+                ${redTeamHTML}
                 </div>
             </div>
         </div>
@@ -240,6 +318,19 @@ function displayMatch(match, player){
 }
 
 function getAllPlayersInMatch(match){
+
+  let players = {}
+
+  match.info.participants.forEach(function(player, index){
+    let champPlayed = player.championName;
+    players[`player${index + 1}`] = {
+      champImg: `http://ddragon.leagueoflegends.com/cdn/14.20.1/img/champion/${champPlayed}.png`,  
+      playerName: player.riotIdGameName + "#" + player.riotIdTagline,
+      teamId: player.teamId 
+    };
+  });
+
+  return players;
   // cette fonction get tout les joueurs dans un match (pseudos + champions joué dans la partie)
   // Elle retourne un objet
 }

@@ -143,7 +143,7 @@ div{
 .player-stats {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 30px;
 }
 
 .champion-icon img {
@@ -188,4 +188,31 @@ div{
 
 .team span {
     display: block;
+}
+
+.player {
+    display: flex;
+    align-items: center; 
+    margin-bottom: 5px; 
+}
+
+.champion-icon {
+    width: 32px; /* Taille de l'image du champion */
+    height: 32px;
+    margin-right: 10px; /* Espace entre l'icône et le nom */
+}
+
+#playerChampion {
+    width: 35px;
+    height: 35px;
+}
+
+.player-name {
+    font-size: 14px; /* Taille du texte */
+    color: #fff; /* Couleur du texte */
+    white-space: nowrap; /* Empêche le texte de passer à la ligne */
+    overflow: hidden; /* Cache le texte qui dépasse */
+    text-overflow: ellipsis; /* Remplace le texte trop long par "..." */
+    max-width: 110px; /* Ajuste la largeur maximale (selon ta mise en page) */
+    display: block; /* S'assure que l'élément agit comme un bloc pour limiter la largeur */
 }
