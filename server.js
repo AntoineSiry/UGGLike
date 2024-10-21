@@ -64,9 +64,9 @@ app.get('/getPlayerAccount/:puuid', async (req, res) => {
   }
 });
 
-app.get('/getMatchBypuuid/:puuid', async (req, res) => {
-  const { puuid } = req.params;
-  const link = `https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=10&${apiKey}`;
+app.get('/getMatchBypuuid/:puuid/:start/:count', async (req, res) => {
+  const { puuid, start, count } = req.params;
+  const link = `https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${count}&${apiKey}`;
 
   try {
     const response = await fetch(link);
@@ -93,3 +93,5 @@ app.get('/getMatchByMatchId/:matchId', async (req, res) => {
 app.listen(3000, () => {
   console.log('Le serveur tourne sur http://localhost:3000');
 });
+
+//${start} ${count}

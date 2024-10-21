@@ -56,11 +56,17 @@ const ranks = {
   }   
 };
 
+let start = 0;
+let count = 10;
+
+let PlayerPuuid;
+
 async function setProfileInfo(){
     const urlParams = new URLSearchParams(window.location.search);
     
     const profileInfoStr = urlParams.get('profileInfo');
     const profileInfo = JSON.parse(decodeURIComponent(profileInfoStr));
+    PlayerPuuid = profileInfo.puuid;
     
     let imageUrl = `https://ddragon.leagueoflegends.com/cdn/14.20.1/img/profileicon/${profileInfo.profileIconId}.png`
     document.getElementById("profileIcon").src = imageUrl;
@@ -78,14 +84,21 @@ async function setProfileInfo(){
     playerLevel.innerHTML = profileInfo.summonerLevel;
 
     const playerRiotId = document.getElementById("riotId");
-    playerRiotId.innerHTML = dataSum.gameName + "#" + dataSum.tagLine;
+    playerRiotId.innerHTML = dataSum.gameName + "#" + dataSum.tagLine; 
+  
+    console.log(data);
 
-    console.log(profileInfo.puuid);
     if(data.length > 0){
       if(data.length > 1){
-        setSoloRankedInfo(data[0]);
-        setFlexRankedInfo(data[1]);
-        setColorToPPBorder(data[0].tier, data[1].tier);
+        if(data[0].queueType === 'RANKED_SOLO_5x5'){
+          setSoloRankedInfo(data[0]);
+          setFlexRankedInfo(data[1]);
+          setColorToPPBorder(data[0].tier, data[1].tier);
+        }else{
+          setSoloRankedInfo(data[1]);
+          setFlexRankedInfo(data[0]);
+          setColorToPPBorder(data[1].tier, data[0].tier);
+        }
       }else if(data[0].queueType === 'RANKED_SOLO_5x5' && data.length <= 1){
         setSoloRankedInfo(data[0]);
         setFlexRankedInfo(null);
@@ -100,9 +113,9 @@ async function setProfileInfo(){
       setFlexRankedInfo(null);
       setColorToPPBorder(null, null)
     }
-    getMatchsId(profileInfo.puuid);
-    
+    //getMatchsId(profileInfo.puuid, Mstart, Mcount);
 }
+
 
 function setSoloRankedInfo(soloRankedData){
 
@@ -212,7 +225,7 @@ function setColorToPPBorder(soloRank, flexRank){
 
 async function getMatchsId(puuid){
 
-    const link = `http://localhost:3000/getMatchBypuuid/${puuid}`;
+    const link = `http://localhost:3000/getMatchBypuuid/${puuid}/${start}/${count}`;
 
     const reponse = await fetch(link);
 
@@ -224,6 +237,9 @@ async function getMatchsId(puuid){
     }
 
     console.log(matchs);
+
+    start += 10;
+    count += 10;
 
     // matchs.forEach(function(matchId){
     //     getMatchByMatchId(matchId, puuid);
@@ -362,42 +378,26 @@ function getItemPurchased(player){
       link: `https://ddragon.leagueoflegends.com/cdn/14.20.1/img/item/${player.item6}.png`
     }
   };
+  //console.log(itemsImg);
+
+  for(let i = 0; i <= 6; i++){
+    if(player[`item${i}`] === 0){
+      itemsImg[`Item${i}`].link = "../Ranked Emblems Latest/NoItems.png";
+    }
+  }
   console.log(itemsImg);
   return itemsImg;
 }
 
-/* <div class="match">
-        <div class="match-header">
-            <div class="rank">${match.rank}</div>
-            <div class="lp">${match.lp > 0 ? '+' + match.lp : match.lp} LP</div>
-            <div class="result ${match.result.toLowerCase()}">${match.result}</div>
-            <div class="match-duration">${match.duration}</div>
-        </div>
-        <div class="match-body">
-            <div class="player-stats">
-                <div class="champion-icon">
-                    <img src="" alt="Champion">
-                </div>
-                <div class="player-kda">
-                    <span>${match.kda.kills} / ${match.kda.deaths} / ${match.kda.assists}</span>
-                    <div class="kda-ratio">${match.kda.ratio} KDA</div>
-                </div>
-                <div class="cs-vision">
-                    <span>${match.cs} CS</span>
-                    <span>${match.vision} vision</span>
-                </div>
-            </div>
-            <div class="items">
-                ${match.items.map(item => `<img src="${item}" alt="Item">`).join('')}
-            </div>
-            <div class="teams">
-                <div class="team team-blue">
-                    ${match.blueTeam.map(player => `<span>${player}</span>`).join('')}
-                </div>
-                <div class="team team-red">
-                    ${match.redTeam.map(player => `<span>${player}</span>`).join('')}
-                </div>
-            </div>
-        </div>
-    </div>
-`; */
+function setupObserver(){
+  const endPage = document.getElementById('endPage');
+
+  const observer = new IntersectionObserver((entries)=> {
+    if(entries[0].isIntersecting){
+      getMatchsId(PlayerPuuid, start, count);
+    }
+  });
+
+observer.observe(endPage);
+
+} 
