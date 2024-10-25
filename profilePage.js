@@ -86,7 +86,7 @@ async function setProfileInfo(){
     const playerRiotId = document.getElementById("riotId");
     playerRiotId.innerHTML = dataSum.gameName + "#" + dataSum.tagLine; 
   
-    console.log(data);
+    //console.log(data);
 
     if(data.length > 0){
       if(data.length > 1){
@@ -236,10 +236,10 @@ async function getMatchsId(puuid){
         await getMatchByMatchId(match, puuid);
     }
 
-    console.log(matchs);
+    //console.log(matchs);
 
     start += 10;
-    count += 10;
+    //count += 10;
 
     // matchs.forEach(function(matchId){
     //     getMatchByMatchId(matchId, puuid);
@@ -272,7 +272,7 @@ function createMatchRecap(match, player){
 
   const itemsImg = getItemPurchased(player);
 
-  console.log(match);
+  //console.log(match);
 
   const blueTeamHTML = Object.keys(players)
     .filter(key => players[key].teamId == 100) 
@@ -385,7 +385,7 @@ function getItemPurchased(player){
       itemsImg[`Item${i}`].link = "../Ranked Emblems Latest/NoItems.png";
     }
   }
-  console.log(itemsImg);
+  //console.log(itemsImg);
   return itemsImg;
 }
 
